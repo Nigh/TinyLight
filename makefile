@@ -5,12 +5,13 @@ VPATH = TinyLight
 # vpath %.c TinyLight
 # vpath %.h TinyLight
 
-clear: 
-	del $(objects)
-	del *.exe
 
 compile: $(objects)
 	gcc $(objects) -o test.exe
+
+clear: 
+	del $(objects)
+	del *.exe
 
 run: compile
 	mingw32-make clear

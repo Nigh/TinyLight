@@ -11,3 +11,8 @@ int main(int argc, char const *argv[])
 	printf(TinyLight.str2());
 	return 0;
 }
+
+void test(void)
+{
+	
+}
