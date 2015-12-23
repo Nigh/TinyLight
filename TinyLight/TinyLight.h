@@ -2,9 +2,11 @@
 #ifndef TINYLIGHT_H
 #define TINYLIGHT_H
 
+#include "./tl_mem.h"
+#include "./tl_dispatch.h"
+
 #define CONST_STR(n,str); static char* n(void) {return str;}
 
-typedef enum{false,true}bool;
 
 struct TINYLIGHT_STRUCT
 {
@@ -15,8 +17,5 @@ struct TINYLIGHT_STRUCT
 	char* (*getName)(void);
 };
 extern struct TINYLIGHT_STRUCT TinyLight;
-
-#define TL_POOL_SIZE (9)	// size=2<<n
-#define ALIGN_SIZE (8)		// 8 byte align
 
 #endif
