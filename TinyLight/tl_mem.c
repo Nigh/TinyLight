@@ -2,55 +2,30 @@
 
 #include "tl_mem.h"
 
-typedef enum sNodeType
-{
-	NT_FREE,
-	NT_USED
-}eNODE_TYPE;
+sMEM_QUEUE tl_mem={0};
 
-static struct sMEM_QUEUE
-{
-	struct sMEM_POOL
-	{
-		unsigned char pool[2<<TL_POOL_SIZE];
-	}ram;
-	// warning:node[0]不要使用
-	// 因为此LL使用了unsigned char作为索引
-	// 0在这里起到了一个显式的NULL的作用
-	// length为0的node会在gc中被释放掉
-	struct sMEM_NODE
-	{
-		eNODE_TYPE type;		// node所指向的内存类型
-		unsigned short offset;	// node所指向的内存偏移
-		unsigned short length;	// node所占用的内存长度(对齐后的长度)
-		unsigned char next,prev;	// LL双向索引
-	}node[NODE_LENGTH];
-	unsigned char head;	// head of LL
-	unsigned char tail;	// tail of LL
-	unsigned char length;	// length of LL
-	bool isInit;
-}tl_mem={0};
-
-void tl_init(void)
+sMEM_QUEUE* tl_init(void)
 {
 	tl_mem.head=1;
 	tl_mem.tail=1;
 	tl_mem.length=1;
 
-	tl_mem.node[1]=(struct sMEM_NODE){NT_FREE,0,2<<TL_POOL_SIZE,0,0};
+	tl_mem.node[1]=(sMEM_NODE){NT_FREE,0,2<<TL_POOL_SIZE,0,0};
 	tl_mem.isInit=true;
+
+	return &tl_mem;
 }
 
 // 在LL尾部增加一个node
-// 若成功则返回node地址
-// 否则返回NULL
-struct sMEM_NODE* tl_mem_node_add(void)
+// 若成功则返回node idx
+// 否则返回0
+unsigned char tl_mem_node_add(void)
 {
 	// 如果LL为空
 	if(tl_mem.head==0){
 		tl_mem.head=1;
 		tl_mem.tail=1;
-		return &(tl_mem.node[1]);
+		return 1;
 	}
 	// 如果LL不满
 	if(tl_mem.length<NODE_LENGTH-1){
@@ -65,19 +40,19 @@ struct sMEM_NODE* tl_mem_node_add(void)
 					tl_mem.node[_].prev=tl_mem.tail;
 					tl_mem.node[_].next=0;
 					tl_mem.tail=_;
-					return &(tl_mem.node[_]);
+					return _;
 				}
 				_+=1;
 			}
 		}
 	}
-	return NULL;
+	return 0;
 }
 
 // 删除一个node并将其所占用空间与邻近的空闲node进行合并
 // 若成功则返回0
 // 否则返回错误代码
-int tl_mem_node_free(struct sMEM_NODE* node)
+int tl_mem_node_free(sMEM_NODE* node)
 {
 	if(node->next>0){
 		tl_mem.node[node->next].prev=node->prev;
@@ -112,8 +87,23 @@ void tl_mem_gc(void)
 // 从指定空闲node中分配node
 void tl_node_malloc(unsigned short size,unsigned char idx)
 {
-	// 将当前node空间收缩至于需求匹配
+	unsigned short free_after=tl_mem.node[idx].length-size;
+	unsigned char _;
+	// 将当前node空间收缩至匹配需求
+	tl_mem.node[idx].length = size;
+	tl_mem.node[idx].type = NT_USED;
 	// 插入新的空闲node管理剩余空间(如果有)
+	if(free_after==0) return;
+	_=tl_mem_node_add();
+	if(_==0){
+		// 插入node失败，应当捕获
+	}
+	tl_mem.node[_].length = free_after;
+	tl_mem.node[_].type = NT_FREE;
+	tl_mem.node[_].prev = idx;
+	tl_mem.node[_].next = tl_mem.node[idx].next;
+	tl_mem.node[idx].next = _;
+
 }
 
 // 在内存池中申请size大小的内存

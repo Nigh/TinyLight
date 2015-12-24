@@ -15,6 +15,7 @@ struct TINYLIGHT_STRUCT
 	char* (*str2)(void);
 	char* (*getVersion)(void);
 	char* (*getName)(void);
+	sMEM_QUEUE* mem;
 };
 extern struct TINYLIGHT_STRUCT TinyLight;
 
