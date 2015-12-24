@@ -49,10 +49,8 @@ unsigned char tl_mem_node_add(void)
 	return 0;
 }
 
-// 删除一个node并将其所占用空间与邻近的空闲node进行合并
-// 若成功则返回0
-// 否则返回错误代码
-int tl_mem_node_free(sMEM_NODE* node)
+// 删除一个node
+int tl_mem_node_del(sMEM_NODE* node)
 {
 	if(node->next>0){
 		tl_mem.node[node->next].prev=node->prev;
@@ -67,6 +65,27 @@ int tl_mem_node_free(sMEM_NODE* node)
 		// 是LL头
 		tl_mem.head=node->next;
 	}
+}
+
+// 将一个node所占用空间释放，并与邻近的空闲node进行合并
+// 若成功则返回0
+// 否则返回错误代码
+int tl_mem_node_free(sMEM_NODE* node)
+{
+	// 当前node空间标记为free
+	node->type = NT_FREE;
+
+	// 检查后向邻近node
+	if(tl_mem.node[node->next].length>0 && tl_mem.node[node->next].type==NT_FREE){
+		node->length+=tl_mem.node[node->next].length;
+		tl_mem_node_del(&(tl_mem.node[node->next]));
+	}
+
+	// 检查前向邻近node
+	if(tl_mem.node[node->prev].length>0 && tl_mem.node[node->prev].type==NT_FREE){
+		tl_mem.node[node->prev].length+=node.length;
+		tl_mem_node_del(node);
+	}
 	return 0;
 }
 
@@ -74,14 +93,13 @@ int tl_mem_node_free(sMEM_NODE* node)
 // 合并相邻的空闲node
 void tl_mem_gc(void)
 {
-	// unsigned char node_idx=tl_mem.head;
-	// if(node_idx==1 && tl_mem.node[1].type==NT_FREE) return;
-	// do {
-	// 	if(tl_mem.node[node_idx].length==0){
-	// 		tl_mem_node_free(&tl_mem.node[node_idx]);
-	// 		node_idx=tl_mem.node[node_idx].next;
-	// 	}
-	// } while(tl_mem.node[node_idx].next>0);
+	unsigned char node_idx=tl_mem.head;
+	while(tl_mem.node[node_idx].next>0){
+		if(tl_mem.node[node_idx].length>0 && tl_mem.node[node_idx].type==NT_FREE){
+			tl_mem_node_free(&(tl_mem.node[node_idx]));
+		}
+		node_idx = tl_mem.node[node_idx].next;
+	}
 }
 
 // 从指定空闲node中分配node
@@ -98,25 +116,22 @@ void tl_node_malloc(unsigned short size,unsigned char idx)
 	if(_==0){
 		// 插入node失败，应当捕获
 	}
+	tl_mem.node[_].offset = tl_mem.node[idx].offset + size;
 	tl_mem.node[_].length = free_after;
 	tl_mem.node[_].type = NT_FREE;
-	tl_mem.node[_].prev = idx;
-	tl_mem.node[_].next = tl_mem.node[idx].next;
-	tl_mem.node[idx].next = _;
-
 }
 
-// 在内存池中申请size大小的内存
+// 在内存池中申请size大小的内存,并传入指针的引用
 // 成功返回0
 int tl_malloc(unsigned short size,void** ptr)
 {
 	unsigned char unalign=size & (sizeof(long)-1);
 	// 内存对齐
 	if(unalign > 0){
-		size+=unalign-sizeof(long);
+		size+=sizeof(long)-unalign;
 	}
 	// 执行gc
-	tl_mem_gc();
+	// tl_mem_gc();
 	// 搜索空闲内存
 	{
 		unsigned char idx=tl_mem.tail;
@@ -140,8 +155,10 @@ int tl_malloc(unsigned short size,void** ptr)
 	return -1;
 }
 
-int tl_free(unsigned short size,void** ptr)
+// 遍历LL,释放掉ptr对应的node
+int tl_free(void** ptr)
 {
-	
+
+
 }
 

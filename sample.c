@@ -20,7 +20,7 @@ void printNode(unsigned char idx)
 void printNodes(void)
 {
 	unsigned char idx=1;
-	printf("printNodes:\n");
+	printf("------------------------printNodes:-------------------------\n");
 	#define this (TinyLight.mem->node[idx])
 	do{
 		printNode(idx);
@@ -28,8 +28,26 @@ void printNodes(void)
 	#undef this
 }
 
+unsigned char pool[128];
+
 void test(void)
 {
+	unsigned char* ptr1=pool;
+	unsigned char* ptr2=pool;
+	unsigned char* ptr3=pool;
+	unsigned char* ptr4=pool;
+	printNodes();
+	tl_malloc(111,&ptr1);
+	*ptr1=1;
+	printNodes();
+	tl_malloc(121,&ptr2);
+	*ptr2=2;
+	printNodes();
+	tl_malloc(131,&ptr3);
+	*ptr3=3;
+	printNodes();
+	tl_malloc(132,&ptr4);
+	*ptr4=4;
 	printNodes();
 }
 

@@ -6,7 +6,7 @@
 #define NULL ((void*)0)
 #endif
 
-#define TL_POOL_SIZE (9)	// size=2<<n
+#define TL_POOL_SIZE (10)	// size=2<<n
 
 #define NODE_LENGTH (64)
 
