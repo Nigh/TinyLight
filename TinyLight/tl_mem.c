@@ -43,13 +43,10 @@ int tl_malloc(unsigned short size, void **ptr)
 	if (unalign > 0) {
 		size += sizeof(long) - unalign;
 	}
-	printf("size=%d\n", size);
 	// 执行gc
 	// tl_mem_gc();
 	// 搜索空闲内存
 	while ( (pNode->type != NT_FREE) || (pNode->length < size) ) {
-		printf("pNode=0x%x\n",(void*)pNode);
-		printf("pNode.next=0x%x\n",(void*)pNode->next);
 		pNode = (sMEM_NODE *)pNode->next;
 		if (pNode == (sMEM_NODE *)tl_mem.tail) {
 			return -1;	// 申请失败
