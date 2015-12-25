@@ -3,40 +3,49 @@
 #include "./TinyLight/TinyLight.h"
 
 
-void printNode(void)
+void printNode(sMEM_NODE *node)
 {
-	// printf("Node[%d]:\n",idx);
-	// printf("Type:");
-	// if(this.type==NT_FREE) printf("Free\n");
-	// else printf("Used\n");
-	// printf("Offset:%d\n",this.offset);
-	// printf("length:%d\n",this.length);
-	// printf("[%02d]<--[%02d]-->[%02d]\n\n",this.prev,idx,this.next);
+	printf("Node[0x%x]:\n",(unsigned long)node);
+	printf("Type:");
+	if(node->type==NT_FREE) printf("Free\n");
+	else printf("Used\n");
+	// printf("Offset:%d\n",node->offset);
+	printf("length:%d\n",node->length);
+	printf("[0x%x]<--[0x%x]-->[0x%x]\n\n",node->prev,node,node->next);
 }
 
 // 打印所有node信息
 void printNodes(void)
 {
-	unsigned char idx=1;
+	sMEM_NODE *pNode = TinyLight.mem->head;
 	printf("------------------------printNodes:-------------------------\n");
-	// #define this (TinyLight.mem->node[idx])
-	// do{
-	// 	printNode(idx);
-	// }while( idx=this.next );
-	// #undef this
+	do{
+		printNode(pNode);
+	}while( (pNode = pNode->next) != TinyLight.mem->head );
 }
 
 unsigned char pool[128];
-
+unsigned char* ptr1=pool;
+unsigned char* ptr2=pool;
+unsigned char* ptr3=pool;
+unsigned char* ptr4=pool;
+unsigned char* ptr5=pool;
+unsigned char* ptr6=pool;
 void test(void)
 {
-	unsigned char* ptr1=pool;
-	unsigned char* ptr2=pool;
-	unsigned char* ptr3=pool;
-	unsigned char* ptr4=pool;
-	// printNodes();
-	tl_malloc(111,(void*)&ptr1);
-	// *ptr1=1;
+	printNodes();
+	printf("ret=%d\n",tl_malloc(111,(void*)&ptr1));
+	printf("ret=%d\n",tl_malloc(11,(void*)&ptr2));
+	printf("ret=%d\n",tl_malloc(131,(void*)&ptr3));
+	printf("ret=%d\n",tl_malloc(1131,(void*)&ptr4));
+	printf("ret=%d\n",tl_malloc(531,(void*)&ptr5));
+	printNodes();
+	printf("ret=%d\n",tl_free((void*)ptr2));
+	printNodes();
+	printf("ret=%d\n",tl_free((void*)ptr3));
+	printNodes();
+	printf("ret=%d\n",tl_malloc(121,(void*)&ptr6));
+	printNodes();
 }
 
 int main(int argc, char const *argv[])

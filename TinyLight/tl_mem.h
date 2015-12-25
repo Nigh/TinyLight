@@ -10,12 +10,15 @@
 
 #define NODE_LENGTH (64)
 
+#define _ALIGN(addr,size) (((addr)+(size)-1)&(~((size)-1)))
+#define _ALIGN_L(addr) _ALIGN(addr,sizeof(long))
+
 typedef enum{false=0,true=1}bool;
 
 typedef enum sNodeType
 {
-	NT_FREE,
-	NT_USED
+	NT_FREE=7,
+	NT_USED=8
 }eNODE_TYPE;
 
 typedef struct sMem_pool
