@@ -13,7 +13,7 @@ CONST_STR(name,"TinyLight");
 static void init(void)
 {
 	// tl_init();
-	self.mem=(struct sMEM_QUEUE*)tl_init();
+	self.mem=tl_init();
 	self.str1=str1;
 	self.str2=str2;
 	self.getVersion=version;
