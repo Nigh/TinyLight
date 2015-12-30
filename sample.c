@@ -24,15 +24,15 @@ void printNodes(void)
 	}while( (pNode = pNode->next) != TinyLight.mem->head );
 }
 
-unsigned char pool[128];
-unsigned char* ptr1=pool;
-unsigned char* ptr2=pool;
-unsigned char* ptr3=pool;
-unsigned char* ptr4=pool;
-unsigned char* ptr5=pool;
-unsigned char* ptr6=pool;
-void test(void)
+void mem_test(void)
 {
+	unsigned char* ptr1;
+	unsigned char* ptr2;
+	unsigned char* ptr3;
+	unsigned char* ptr4;
+	unsigned char* ptr5;
+	unsigned char* ptr6;
+	printf("------------------------mem_test:-------------------------\n");
 	printNodes();
 	printf("ret=%d\n",tl_malloc(111,(void*)&ptr1));
 	printf("ret=%d\n",tl_malloc(11,(void*)&ptr2));
@@ -48,11 +48,19 @@ void test(void)
 	printNodes();
 }
 
+void dispatch_test(void)
+{
+	sMEM_POOL* temp;
+	printf("------------------------dispatch_test:-------------------------\n");
+	printf("size=%d\n",sizeof(*temp));
+}
+
 int main(int argc, char const *argv[])
 {
 	TinyLight.init();
 	printf("%s %s",TinyLight.getName(),TinyLight.getVersion());
 	printf("\n");
-	test();
+	// mem_test();
+	dispatch_test();
 	return 0;
 }
