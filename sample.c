@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include "./TinyLight/TinyLight.h"
+#include "./dispatch_example.h"
 
 
 void printNode(sMEM_NODE *node)
@@ -50,9 +51,11 @@ void mem_test(void)
 
 void dispatch_test(void)
 {
-	sMEM_POOL* temp;
+	// sMEM_POOL* temp;
 	printf("------------------------dispatch_test:-------------------------\n");
-	printf("size=%d\n",sizeof(*temp));
+	// printf("size=%d\n",sizeof(*temp));
+	taskAdd_example();
+	
 }
 
 int main(int argc, char const *argv[])

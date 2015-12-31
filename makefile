@@ -1,6 +1,6 @@
 
-objects = TinyLight.o sample.o ./TinyLight/tl_mem.o ./TinyLight/tl_dispatch.o
 VPATH = TinyLight
+objects = TinyLight.o sample.o dispatch_example.o ./$(VPATH)/tl_mem.o ./$(VPATH)/tl_dispatch.o
 .PHONY : clear run
 # vpath %.c TinyLight
 # vpath %.h TinyLight
@@ -18,18 +18,20 @@ compile: $(objects)
 clear: 
 	rm -f $(objects)
 	rm -f *.out
-	rm -f ./TinyLight/*.o
+	rm -f ./$(VPATH)/*.o
 
 run: compile
 	mingw32-make clear
 	mingw32-make compile
 	test.exe
 
-sample.o: TinyLight.o
+sample.o: TinyLight.o dispatch_example.o
 	gcc -c sample.c
 
-TinyLight.o: ./TinyLight/TinyLight.h ./TinyLight/tl_mem.o ./TinyLight/tl_dispatch.o
-	gcc -c ./TinyLight/TinyLight.c ./TinyLight/TinyLight.h
+dispatch_example.o: dispatch_example.h TinyLight.o
+	gcc -c dispatch_example.c dispatch_example.h
+TinyLight.o: ./$(VPATH)/TinyLight.h ./$(VPATH)/tl_mem.o ./$(VPATH)/tl_dispatch.o
+	gcc -c ./$(VPATH)/TinyLight.c ./$(VPATH)/TinyLight.h
 tl_mem.o:
 	gcc -c ./$(VPATH)/tl_mem.c ./$(VPATH)/tl_mem.h
 tl_dispatch.o:
