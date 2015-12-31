@@ -15,8 +15,21 @@ struct TINYLIGHT_STRUCT
 	char* (*str2)(void);
 	char* (*getVersion)(void);
 	char* (*getName)(void);
-	sMEM_QUEUE* mem;
+	struct TINYLIGHT_MEM
+	{
+		sMEM_QUEUE* (*init)(void);
+		int (*malloc)(unsigned short size,void** ptr);
+		int (*free)(void *ptr);
+	}mem;
+	struct TINYLIGHT_DISPATCH
+	{
+		sTASK* (*new)(fTask* func,unsigned short size);
+		int (*insert)(sTASK* task);
+		int (*exec)(sTASK* task);
+		int (*dispatch)(void);
+	}task;
+	sMEM_QUEUE* memq;
 };
-extern struct TINYLIGHT_STRUCT TinyLight;
+extern struct TINYLIGHT_STRUCT TL;
 
 #endif

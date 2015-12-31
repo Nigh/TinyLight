@@ -4,7 +4,7 @@
 
 
 // int tl_taskAdd(fTask* func,struct*)
-#define tl_taskAdd(A,B) tl_taskNew((A),(sizeof(B)+sizeof(sTASK)))
+#define tl_taskNews(A,B) tl_taskNew((A),(sizeof(B)+sizeof(sTASK)))
 
 typedef void fTask(void*);
 typedef struct sTasks

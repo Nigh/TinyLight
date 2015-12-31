@@ -62,6 +62,7 @@ int tl_malloc(unsigned short size, void **ptr)
 		pNodeNew->next = pNode->next;
 		pNodeNew->prev = (void *)pNode;
 		pNode->next = pNodeNew;
+		((sMEM_NODE *)(pNodeNew->next))->prev = pNodeNew;
 		tl_mem.tail = pNodeNew;
 	}
 	pNode->type = NT_USED;
@@ -80,14 +81,30 @@ int tl_free(void *ptr)
 	nodePtr->type = NT_FREE;
 	// 后向搜索合并
 	if ( nodePtr->next != nodePtr && ((sMEM_NODE *)(nodePtr->next))->type == NT_FREE ) {
+		if(tl_mem.tail == nodePtr->next){
+			tl_mem.tail = nodePtr;
+		}
+		((sMEM_NODE *)((sMEM_NODE *)(nodePtr->next))->next)->prev = nodePtr;
 		nodePtr->length += ((sMEM_NODE *)(nodePtr->next))->length;
 		nodePtr->next = ((sMEM_NODE *)(nodePtr->next))->next;
 	}
 	// 前向搜索合并
-	if ( (nodePtr)->prev != nodePtr && ((sMEM_NODE *)(nodePtr->prev))->type == NT_FREE ) {
-		((sMEM_NODE *)(nodePtr->prev))->length += nodePtr->length;
-		((sMEM_NODE *)(nodePtr->prev))->next = nodePtr->next;
+	if ( nodePtr > nodePtr->prev && ((sMEM_NODE *)(nodePtr->prev))->type == NT_FREE ) {
+		nodePtr = (sMEM_NODE *)(nodePtr->prev);
+		if(tl_mem.tail == nodePtr->next){
+			tl_mem.tail = nodePtr;
+		}
+		((sMEM_NODE *)((sMEM_NODE *)(nodePtr->next))->next)->prev = nodePtr;
+		nodePtr->length += ((sMEM_NODE *)(nodePtr->next))->length;
+		nodePtr->next = ((sMEM_NODE *)(nodePtr->next))->next;
+		// nodePtr->length += nodePtr->length;
+		// nodePtr = (sMEM_NODE *)(nodePtr->next);
 	}
+	// if ( (nodePtr)->prev != nodePtr && ((sMEM_NODE *)(nodePtr->prev))->type == NT_FREE ) {
+	// 	((sMEM_NODE *)((sMEM_NODE *)(nodePtr->prev))->prev)->next = (sMEM_NODE *)(nodePtr->prev);
+	// 	((sMEM_NODE *)(nodePtr->prev))->length += nodePtr->length;
+	// 	((sMEM_NODE *)(nodePtr->prev))->next = nodePtr->next;
+	// }
 	return 0;
 }
 

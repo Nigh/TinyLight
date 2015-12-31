@@ -46,5 +46,6 @@ typedef struct sMem_queue
 
 sMEM_QUEUE* tl_init(void);
 int tl_malloc(unsigned short size,void** ptr);
+int tl_free(void *ptr);
 
 #endif
