@@ -35,7 +35,7 @@ sMEM_QUEUE *tl_init(void)
 int tl_malloc(unsigned short size, void **ptr)
 {
 	unsigned short free_after;
-	sMEM_NODE *pNode = (sMEM_NODE *)tl_mem.tail;
+	sMEM_NODE *pNode = (sMEM_NODE *)tl_mem.head;
 	sMEM_NODE *pNodeNew;
 	size += _ALIGN_L(sizeof(sMEM_NODE));
 	size = _ALIGN_L(size);
@@ -44,7 +44,7 @@ int tl_malloc(unsigned short size, void **ptr)
 	// 搜索空闲内存
 	while ( (pNode->type != NT_FREE) || (pNode->length < size) ) {
 		pNode = pNode->next;
-		if (pNode == tl_mem.tail) {
+		if (pNode == tl_mem.head) {
 			return -1;	// 申请失败
 		}
 	}
@@ -81,19 +81,19 @@ int tl_free(void *ptr)
 	nodePtr->type = NT_FREE;
 	// 后向搜索合并
 	if ( nodePtr->next != nodePtr && ((sMEM_NODE *)(nodePtr->next))->type == NT_FREE ) {
-		if(tl_mem.tail == nodePtr->next){
-			tl_mem.tail = nodePtr;
-		}
+		// if(tl_mem.tail == nodePtr->next){
+		// 	tl_mem.tail = nodePtr;
+		// }
 		((sMEM_NODE *)((sMEM_NODE *)(nodePtr->next))->next)->prev = nodePtr;
 		nodePtr->length += ((sMEM_NODE *)(nodePtr->next))->length;
 		nodePtr->next = ((sMEM_NODE *)(nodePtr->next))->next;
 	}
 	// 前向搜索合并
-	if ( nodePtr > nodePtr->prev && ((sMEM_NODE *)(nodePtr->prev))->type == NT_FREE ) {
+	if ( (void*)nodePtr > (void*)(nodePtr->prev) && ((sMEM_NODE *)(nodePtr->prev))->type == NT_FREE ) {
 		nodePtr = (sMEM_NODE *)(nodePtr->prev);
-		if(tl_mem.tail == nodePtr->next){
-			tl_mem.tail = nodePtr;
-		}
+		// if(tl_mem.tail == nodePtr->next){
+		// 	tl_mem.tail = nodePtr;
+		// }
 		((sMEM_NODE *)((sMEM_NODE *)(nodePtr->next))->next)->prev = nodePtr;
 		nodePtr->length += ((sMEM_NODE *)(nodePtr->next))->length;
 		nodePtr->next = ((sMEM_NODE *)(nodePtr->next))->next;

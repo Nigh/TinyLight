@@ -18,13 +18,13 @@ void printNode(sMEM_NODE *node)
 // 打印所有node信息
 void printNodes(int n)
 {
-	sMEM_NODE *pNode = TL.memq->tail;
+	sMEM_NODE *pNode = TL.memq->head;
 	int i=0;
 	printf("------------------------printNodes[%d]:-------------------------\n",n);
 	do{
 		printNode(pNode);
-		printf("0x%x\n", TL.memq->tail);
-	}while( i++<10 && (pNode = pNode->next) != TL.memq->tail );
+		printf("0x%x\n", TL.memq->head);
+	}while( (pNode = pNode->next) != TL.memq->head );
 }
 
 #define freePrint(x) printf("free(0x%x)\nret=%d\n",x-_ALIGN_L(sizeof(sMEM_NODE)),tl_free((void*)x))
@@ -75,6 +75,6 @@ int main(int argc, char const *argv[])
 	printf("%s %s",TL.getName(),TL.getVersion());
 	printf("\n");
 	mem_test();
-	// dispatch_test();
+	dispatch_test();
 	return 0;
 }

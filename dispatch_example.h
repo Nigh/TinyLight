@@ -8,7 +8,7 @@ typedef struct
 	unsigned char hour;
 	unsigned char min;
 	unsigned char sec;
-	unsigned char array[100];
+	unsigned char array[33];
 }sTIME;
 void printTime(sTIME* content);
 void taskAdd_example(void);
