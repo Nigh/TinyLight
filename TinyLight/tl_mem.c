@@ -56,7 +56,7 @@ int tl_malloc(unsigned short size, void **ptr)
 	}
 	// 管理剩余空间
 	if (free_after > 0) {
-		pNodeNew = ((void*)pNode + size);
+		pNodeNew = (sMEM_NODE*)((char*)pNode + size);
 		pNodeNew->type = NT_FREE;
 		pNodeNew->length = free_after;
 		pNodeNew->next = pNode->next;
@@ -67,14 +67,14 @@ int tl_malloc(unsigned short size, void **ptr)
 	}
 	pNode->type = NT_USED;
 	pNode->length = size;
-	*ptr = (void *)((void*)pNode + _ALIGN_L(sizeof(sMEM_NODE)));
+	*ptr = (void *)((char*)pNode + _ALIGN_L(sizeof(sMEM_NODE)));
 	return 0;
 }
 
 // 释放掉ptr对应的node所占用空间
 int tl_free(void *ptr)
 {
-	sMEM_NODE *nodePtr = ((void*)ptr - _ALIGN_L(sizeof(sMEM_NODE)));
+	sMEM_NODE *nodePtr = (sMEM_NODE *)((char*)ptr - _ALIGN_L(sizeof(sMEM_NODE)));
 	if(nodePtr->type != NT_FREE && nodePtr->type != NT_USED){
 		return -1;
 	}

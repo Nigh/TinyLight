@@ -15,7 +15,7 @@ sTASK* tl_taskNew(fTask* func,unsigned short size)
 	// 方法attach
 	pTask->func = func;
 	// 将content指针指向content内容头部
-	pTask->content = (void*)pTask+sizeof(sTASK);
+	pTask->content = (char*)pTask+sizeof(sTASK);
 	return pTask;
 }
 

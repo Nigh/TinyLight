@@ -13,7 +13,9 @@
 #define _ALIGN(addr,size) (((addr)+(size)-1)&(~((size)-1)))
 #define _ALIGN_L(addr) _ALIGN(addr,sizeof(long))
 
+#ifndef bool
 typedef enum{false=0,true=1}bool;
+#endif
 
 typedef enum sNodeType
 {
