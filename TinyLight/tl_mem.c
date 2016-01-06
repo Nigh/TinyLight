@@ -17,17 +17,29 @@ sMEM_QUEUE *tl_init(void)
 	return &tl_mem;
 }
 
-// // 垃圾回收
-// // 合并相邻的空闲node
-// void tl_mem_gc(void)
-// {
-// 	sMEM_NODE *pNode = tl_mem.head;
-// 	do{
-// 		if(pNode->type == NT_FREE){
-// 			// free当前node
-// 		}
-// 	}while( (pNode = pNode->next) != tl_mem.head );
-// }
+// 垃圾回收
+// 合并相邻的空闲node
+void tl_gc(void)
+{
+	sMEM_NODE *pNode = tl_mem.head;
+	do{
+		if(pNode->type == NT_FREE){
+			// 后向搜索合并
+			if ( (void*)(pNode->next) > (void*)pNode && ((sMEM_NODE *)(pNode->next))->type == NT_FREE ) {
+				((sMEM_NODE *)((sMEM_NODE *)(pNode->next))->next)->prev = pNode;
+				pNode->length += ((sMEM_NODE *)(pNode->next))->length;
+				pNode->next = ((sMEM_NODE *)(pNode->next))->next;
+			}
+			// 前向搜索合并
+			if ( (void*)pNode > (void*)(pNode->prev) && ((sMEM_NODE *)(pNode->prev))->type == NT_FREE ) {
+				pNode = (sMEM_NODE *)(pNode->prev);
+				((sMEM_NODE *)((sMEM_NODE *)(pNode->next))->next)->prev = pNode;
+				pNode->length += ((sMEM_NODE *)(pNode->next))->length;
+				pNode->next = ((sMEM_NODE *)(pNode->next))->next;
+			}
+		}
+	}while( (pNode = pNode->next) != tl_mem.head );
+}
 
 // 在内存池中申请size大小的内存
 // 通过ptr回传申请内存的首地址
@@ -79,32 +91,6 @@ int tl_free(void *ptr)
 		return -1;
 	}
 	nodePtr->type = NT_FREE;
-	// 后向搜索合并
-	if ( nodePtr->next != nodePtr && ((sMEM_NODE *)(nodePtr->next))->type == NT_FREE ) {
-		// if(tl_mem.tail == nodePtr->next){
-		// 	tl_mem.tail = nodePtr;
-		// }
-		((sMEM_NODE *)((sMEM_NODE *)(nodePtr->next))->next)->prev = nodePtr;
-		nodePtr->length += ((sMEM_NODE *)(nodePtr->next))->length;
-		nodePtr->next = ((sMEM_NODE *)(nodePtr->next))->next;
-	}
-	// 前向搜索合并
-	if ( (void*)nodePtr > (void*)(nodePtr->prev) && ((sMEM_NODE *)(nodePtr->prev))->type == NT_FREE ) {
-		nodePtr = (sMEM_NODE *)(nodePtr->prev);
-		// if(tl_mem.tail == nodePtr->next){
-		// 	tl_mem.tail = nodePtr;
-		// }
-		((sMEM_NODE *)((sMEM_NODE *)(nodePtr->next))->next)->prev = nodePtr;
-		nodePtr->length += ((sMEM_NODE *)(nodePtr->next))->length;
-		nodePtr->next = ((sMEM_NODE *)(nodePtr->next))->next;
-		// nodePtr->length += nodePtr->length;
-		// nodePtr = (sMEM_NODE *)(nodePtr->next);
-	}
-	// if ( (nodePtr)->prev != nodePtr && ((sMEM_NODE *)(nodePtr->prev))->type == NT_FREE ) {
-	// 	((sMEM_NODE *)((sMEM_NODE *)(nodePtr->prev))->prev)->next = (sMEM_NODE *)(nodePtr->prev);
-	// 	((sMEM_NODE *)(nodePtr->prev))->length += nodePtr->length;
-	// 	((sMEM_NODE *)(nodePtr->prev))->next = nodePtr->next;
-	// }
 	return 0;
 }
 
