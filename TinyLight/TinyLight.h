@@ -15,11 +15,13 @@ struct TINYLIGHT_STRUCT
 	char* (*str2)(void);
 	char* (*getVersion)(void);
 	char* (*getName)(void);
+	int (*isAvaliable)(void);
 	struct TINYLIGHT_MEM
 	{
 		sMEM_QUEUE* (*init)(void);
 		int (*malloc)(unsigned short size,void** ptr);
 		int (*free)(void *ptr);
+		void (*gc)(void);
 	}mem;
 	struct TINYLIGHT_DISPATCH
 	{

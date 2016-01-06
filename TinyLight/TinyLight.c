@@ -17,10 +17,12 @@ static void init(void)
 	self.str2=str2;
 	self.getVersion=version;
 	self.getName=name;
+	self.isAvaliable=isAvaliable;
 
 	self.mem.init=tl_init;
 	self.mem.malloc=tl_malloc;
 	self.mem.free=tl_free;
+	self.mem.gc=tl_gc;
 
 	self.task.new=tl_taskNew;
 	self.task.insert=tl_taskInsert;

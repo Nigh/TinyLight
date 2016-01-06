@@ -27,7 +27,9 @@ void printNodes(int n)
 	}while( (pNode = pNode->next) != TL.memq->head );
 }
 
-#define freePrint(x) printf("free(0x%x)\nret=%d\n",x-_ALIGN_L(sizeof(sMEM_NODE)),tl_free((void*)x))
+#define freePrint(x) printf("free(0x%x)\nret=%d\n",x-_ALIGN_L(sizeof(sMEM_NODE)),tl_free((void*)x));\
+TL.mem.gc()
+
 void mem_test(void)
 {
 	unsigned char* ptr1;
