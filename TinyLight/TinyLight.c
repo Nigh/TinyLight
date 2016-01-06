@@ -5,7 +5,7 @@
 static int isAvaliable(void);
 CONST_STR(str1,"test01\n");
 CONST_STR(str2,"test02\n");
-CONST_STR(version,"v0.9.5");
+CONST_STR(version,"v0.9.6");
 CONST_STR(name,"TinyLight");
 
 #define self TL
