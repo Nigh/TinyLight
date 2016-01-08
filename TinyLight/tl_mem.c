@@ -25,18 +25,18 @@ void tl_gc(void)
 	do{
 		if(pNode->type == NT_FREE){
 			// 后向搜索合并
-			if ( (void*)(pNode->next) > (void*)pNode && ((sMEM_NODE *)(pNode->next))->type == NT_FREE ) {
+			while ( (void*)(pNode->next) > (void*)pNode && ((sMEM_NODE *)(pNode->next))->type == NT_FREE ) {
 				((sMEM_NODE *)((sMEM_NODE *)(pNode->next))->next)->prev = pNode;
 				pNode->length += ((sMEM_NODE *)(pNode->next))->length;
 				pNode->next = ((sMEM_NODE *)(pNode->next))->next;
 			}
 			// 前向搜索合并
-			if ( (void*)pNode > (void*)(pNode->prev) && ((sMEM_NODE *)(pNode->prev))->type == NT_FREE ) {
-				pNode = (sMEM_NODE *)(pNode->prev);
-				((sMEM_NODE *)((sMEM_NODE *)(pNode->next))->next)->prev = pNode;
-				pNode->length += ((sMEM_NODE *)(pNode->next))->length;
-				pNode->next = ((sMEM_NODE *)(pNode->next))->next;
-			}
+			// while ( (void*)pNode > (void*)(pNode->prev) && ((sMEM_NODE *)(pNode->prev))->type == NT_FREE ) {
+			// 	pNode = (sMEM_NODE *)(pNode->prev);
+			// 	((sMEM_NODE *)((sMEM_NODE *)(pNode->next))->next)->prev = pNode;
+			// 	pNode->length += ((sMEM_NODE *)(pNode->next))->length;
+			// 	pNode->next = ((sMEM_NODE *)(pNode->next))->next;
+			// }
 		}
 	}while( (pNode = pNode->next) != tl_mem.head );
 }
