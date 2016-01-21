@@ -13,42 +13,39 @@
 #define _ALIGN(addr,size) (((addr)+(size)-1)&(~((size)-1)))
 #define _ALIGN_L(addr) _ALIGN(addr,sizeof(long))
 
-#ifndef bool
-typedef enum{false=0,true=1}bool;
-#endif
+// #ifdef _bool
+#undef false
+#undef true
+typedef enum {false = 0, true = 1} _bool;
+// #endif
 
-typedef enum sNodeType
-{
-	NT_FREE=7,
-	NT_USED=8
-}eNODE_TYPE;
+typedef enum sNodeType {
+	NT_FREE = 7,
+	NT_USED = 8
+} eNODE_TYPE;
 
-typedef struct sMem_pool
-{
-	unsigned char pool[2<<TL_POOL_SIZE];
-}sMEM_POOL;
+typedef struct sMem_pool {
+	unsigned char pool[2 << TL_POOL_SIZE];
+} sMEM_POOL;
 
-typedef struct sMem_node
-{
+typedef struct sMem_node {
 	eNODE_TYPE type;		// node所指向的内存类型
 	unsigned short offset;	// node所指向的内存偏移
 	unsigned short length;	// node所占用的内存长度(对齐后的长度)
-	void* next;
-	void* prev;				// LL双向索引
-}sMEM_NODE;
+	void *next;
+	void *prev;				// LL双向索引
+} sMEM_NODE;
 
-typedef struct sMem_queue
-{
+typedef struct sMem_queue {
 	sMEM_POOL ram;
-	void* head;	// head of LL
-	void* tail;	// tail of LL
+	void *head;	// head of LL
+	void *tail;	// tail of LL
 	unsigned char length;	// length of LL
-	bool isInit;
-}sMEM_QUEUE;
+	_bool isInit;
+} sMEM_QUEUE;
 
-sMEM_QUEUE* tl_init(void);
-int tl_malloc(unsigned short size,void** ptr);
+sMEM_QUEUE *tl_init(void);
+int tl_malloc(unsigned short size, void **ptr);
 int tl_free(void *ptr);
 void tl_gc(void);
-
 #endif

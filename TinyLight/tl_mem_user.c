@@ -1,14 +1,17 @@
 
-#include "tl_mem.h"
+#include "tl_mem_user.h"
 
-sMEM_QUEUE tl_mem = {0};
+#define _ALIGN(addr,size) (((addr)+(size)-1)&(~((size)-1)))
+#define _ALIGN_L(addr) _ALIGN(addr,sizeof(long))
 
-sMEM_QUEUE *tl_init(void)
+static sMEM_QUEUE_USER tl_mem = {0};
+
+sMEM_QUEUE_USER *tl_init_user(void)
 {
 	tl_mem.head = &(tl_mem.ram.pool[0]);
 	tl_mem.tail = &(tl_mem.ram.pool[0]);
 	tl_mem.length = 1;
-	tl_mem.isInit = (_bool)true;
+	tl_mem.isInit = true;
 	((sMEM_NODE *)(tl_mem.tail))->type = NT_FREE;
 	((sMEM_NODE *)(tl_mem.tail))->offset = 0;
 	((sMEM_NODE *)(tl_mem.tail))->length = 2 << TL_POOL_SIZE;
@@ -19,7 +22,7 @@ sMEM_QUEUE *tl_init(void)
 
 // 垃圾回收
 // 合并相邻的空闲node
-void tl_gc(void)
+void tl_gc_user(void)
 {
 	sMEM_NODE *pNode = tl_mem.head;
 	do {
@@ -45,7 +48,7 @@ void tl_gc(void)
 // 在内存池中申请size大小的内存
 // 通过ptr回传申请内存的首地址
 // 成功返回0
-int tl_malloc(unsigned short size, void **ptr)
+int tl_malloc_user(unsigned short size, void **ptr)
 {
 	unsigned short free_after;
 	sMEM_NODE *pNode = (sMEM_NODE *)tl_mem.head;
@@ -85,7 +88,7 @@ int tl_malloc(unsigned short size, void **ptr)
 }
 
 // 释放掉ptr对应的node所占用空间
-int tl_free(void *ptr)
+int tl_free_user(void *ptr)
 {
 	sMEM_NODE *nodePtr = (sMEM_NODE *)((char *)ptr - _ALIGN_L(sizeof(sMEM_NODE)));
 	if (nodePtr->type != NT_FREE && nodePtr->type != NT_USED) {
@@ -94,4 +97,3 @@ int tl_free(void *ptr)
 	nodePtr->type = NT_FREE;
 	return 0;
 }
-

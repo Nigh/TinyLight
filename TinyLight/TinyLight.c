@@ -3,31 +3,31 @@
 
 
 static int isAvaliable(void);
-CONST_STR(str1,"test01\n");
-CONST_STR(str2,"test02\n");
-CONST_STR(version,"v0.9.6");
-CONST_STR(name,"TinyLight");
+CONST_STR(str1, "test01\n");
+CONST_STR(str2, "test02\n");
+CONST_STR(version, "v0.9.7");
+CONST_STR(name, "TinyLight");
 
 #define self TL
 
 static void init(void)
 {
-	self.memq=tl_init();
-	self.str1=str1;
-	self.str2=str2;
-	self.getVersion=version;
-	self.getName=name;
-	self.isAvaliable=isAvaliable;
+	self.memq = tl_init();
+	self.str1 = str1;
+	self.str2 = str2;
+	self.getVersion = version;
+	self.getName = name;
+	self.isAvaliable = isAvaliable;
 
-	self.mem.init=tl_init;
-	self.mem.malloc=tl_malloc;
-	self.mem.free=tl_free;
-	self.mem.gc=tl_gc;
+	self.mem.init = tl_init;
+	self.mem.malloc = tl_malloc;
+	self.mem.free = tl_free;
+	self.mem.gc = tl_gc;
 
-	self.task.new=tl_taskNew;
-	self.task.insert=tl_taskInsert;
-	self.task.exec=tl_taskExec;
-	self.task.dispatch=tl_taskDispatch;
+	self.task.new = tl_taskNew;
+	self.task.insert = tl_taskInsert;
+	self.task.exec = tl_taskExec;
+	self.task.dispatch = tl_taskDispatch;
 }
 
 static int isAvaliable(void)
@@ -36,5 +36,5 @@ static int isAvaliable(void)
 }
 #undef self
 
-struct TINYLIGHT_STRUCT TL={.init=init};
+struct TINYLIGHT_STRUCT TL = {.init = init};
 
