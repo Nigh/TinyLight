@@ -22,7 +22,7 @@ int tl_malloc(unsigned short size, void **ptr)
 	unsigned char d=size>>WIDTH2;
 	if(d) mem_ptr += d;
 	else mem_ptr += 1;
-	mem_ptr &= (MEM_DEPTH-1);
+	if(mem_ptr>=MEM_DEPTH) mem_ptr = 0;
 	*ptr = mem[mem_ptr];
 	return 0;
 }
