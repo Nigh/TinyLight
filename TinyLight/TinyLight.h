@@ -17,7 +17,7 @@ struct TINYLIGHT_STRUCT
 	char* (*getName)(void);
 	struct TINYLIGHT_MEM
 	{
-		sMEM_QUEUE* (*init)(void);
+		void (*init)(void);
 		int (*malloc)(unsigned short size,void** ptr);
 		int (*free)(void *ptr);
 	}mem;
@@ -28,7 +28,6 @@ struct TINYLIGHT_STRUCT
 		int (*exec)(sTASK* task);
 		int (*dispatch)(void);
 	}task;
-	sMEM_QUEUE* memq;
 };
 extern struct TINYLIGHT_STRUCT TL;
 

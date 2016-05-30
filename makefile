@@ -21,9 +21,11 @@ clear:
 	rm -f ./$(VPATH)/*.o
 
 run: compile
-	mingw32-make clear
-	mingw32-make compile
-	test.exe
+	make clear
+	make compile
+	./debug.out
+#	mingw32-make clear
+#	mingw32-make compile
 
 sample.o: TinyLight.o dispatch_example.o
 	gcc -c sample.c

@@ -21,13 +21,13 @@ sTASK* tl_taskNew(fTask* func,unsigned short size)
 
 int tl_taskInsert(sTASK* task)
 {
-	if(taskTail!=NULL){
-		((sTASK*)(taskTail))->next = (void*)task;
-		taskTail = task;
+	sTASK *pTask=taskHead;
+	if(taskHead!=NULL){
+		while(pTask->next!=NULL) pTask=pTask->next;
+		pTask->next = task;
 	}else{
 		// 由空建立新任务
 		taskHead = (void*)task;
-		taskTail = (void*)task;
 	}
 	task->next = NULL;
 	return 0;
@@ -39,7 +39,6 @@ int tl_taskExec(sTASK* task)
 	taskHead = task->next;
 	tl_free((void*)task);
 	if(taskHead==NULL){
-		taskTail=NULL;
 		return -1;	// 队列空
 	}
 	return 0;
