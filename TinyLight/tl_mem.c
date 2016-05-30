@@ -20,10 +20,13 @@ void tl_init(void)
 int tl_malloc(unsigned short size, void **ptr)
 {
 	unsigned char d=size>>WIDTH2;
+	*ptr = mem[mem_ptr];
 	if(d) mem_ptr += d;
 	else mem_ptr += 1;
-	if(mem_ptr>=MEM_DEPTH) mem_ptr = 0;
-	*ptr = mem[mem_ptr];
+	if(mem_ptr>=MEM_DEPTH) {
+		mem_ptr = 0;
+		*ptr = mem[mem_ptr];
+	}
 	return 0;
 }
 
