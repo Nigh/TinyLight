@@ -4,14 +4,13 @@
 
 
 static void* taskHead=NULL;
-static void* taskTail=NULL;
 
 sTASK* tl_taskNew(fTask* func,unsigned short size)
 {
 	// 申请空间
 	sTASK* pTask;
 	// tl_malloc(size,(void*)&(task->content));
-	tl_malloc(size,(void*)&pTask);
+	tl_malloc(size+sizeof(sTASK),(void*)&pTask);
 	// 方法attach
 	pTask->func = func;
 	// 将content指针指向content内容头部
